@@ -5,6 +5,7 @@ class Program
 {
     static List<Team> teams = new List<Team>();
     static List<Driver> availableDrivers = new List<Driver>();
+    static List<Coach> availableCoaches = new List<Coach>();
 
     static void Main(string[] args)
     {
@@ -45,11 +46,11 @@ class Program
                 case "6":
                     AddTeamMember();
                     break;
-                case "7":
-                    RemoveTeamMember();
-                    break;
-                case "8":
-                    CreateRace();
+                //case "7":
+                //    RemoveTeamMember();
+                //    break;
+                //case "8":
+                //    CreateRace();
                     break;
                 case "0":
                     exit = true;
@@ -108,8 +109,11 @@ class Program
         string name = Console.ReadLine();
         Console.WriteLine("Введіть вік тренера:");
         int age = int.Parse(Console.ReadLine());
-        Coach newCoach = new Coach { Name = name, Age = age };
-        teams[0].Coach = newCoach; // Припускається, що у вас є команда, для якої тренер
+        Console.WriteLine("Введіть зарплату тренера:");
+        int salary = int.Parse(Console.ReadLine());
+
+        Coach newCoach = new Coach(name, age, salary);
+        availableCoaches.Add(newCoach);
         Console.WriteLine($"Тренер {name} створений!");
     }
 
@@ -139,3 +143,61 @@ class Program
             Console.WriteLine();
         }
     }
+
+    static void AddTeamMember()
+    {
+        Console.WriteLine("Оберіть команду в яку хочете додати члена:");
+
+        // Виведення існуючих команд
+        for (int i = 0; i < teams.Count; i++)
+        {
+            Console.WriteLine($"{i + 1} {teams[i].TeamName}");
+        }
+
+        // Введення та перевірка введеного значення
+        int teamChoice;
+        if (int.TryParse(Console.ReadLine(), out teamChoice) && teamChoice >= 1 && teamChoice <= teams.Count)
+        {
+            Team selectedTeam = teams[teamChoice - 1];
+
+            Console.WriteLine("Список вже існуючих водіїв та тренерів:");
+
+            // Виведення існуючих водіїв
+            Console.WriteLine("Водії:");
+            foreach (Driver existingDriver in availableDrivers)
+            {
+                Console.WriteLine($"- {existingDriver.Name}");
+            }
+
+            // Виведення існуючих тренерів
+            Console.WriteLine("Тренери:");
+            foreach (Coach existingCoach in availableCoaches)
+            {
+                Console.WriteLine($"- {existingCoach.Name}");
+            }
+
+            Console.WriteLine("Оберіть члена команди:");
+
+            // Введення та перевірка введеного значення
+            string memberName = Console.ReadLine();
+            IPerson existingMember = availableDrivers.FirstOrDefault(driver => driver.Name == memberName) as IPerson
+                       ?? availableCoaches.FirstOrDefault(coach => coach.Name == memberName) as IPerson;
+
+            if (existingMember != null)
+            {
+                availableDrivers.Remove(existingMember as Driver);
+                availableCoaches.Remove(existingMember as Coach);
+                selectedTeam.Members.Add(existingMember);
+                Console.WriteLine($"{memberName} доданий до команди {selectedTeam.TeamName}!");
+            }
+            else
+            {
+                Console.WriteLine($"Члена команди {memberName} не знайдено серед доступних водіїв та тренерів.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Невірний вибір команди.");
+        }
+    }
+}

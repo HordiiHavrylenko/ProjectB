@@ -10,6 +10,9 @@ namespace ProjectB
     {
 
         public string TeamName { get; set; }
+        public List<Driver> Drivers { get; set; }
+        public Coach Coach { get; set; }
+
         public List<IPerson> Members { get; set; }
 
         public Team()
