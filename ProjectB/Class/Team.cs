@@ -9,17 +9,42 @@ namespace ProjectB
     public class Team : IPrintable
     {
 
-        public string TeamName { get; set; }
+        private string teamName;
         public List<Driver> Drivers { get; set; }
         public Coach Coach { get; set; }
 
         public List<IPerson> Members { get; set; }
 
-        public Team()
+        public string TeamName 
+        {
+            get { return teamName; }
+            set
+            {
+                if(!string.IsNullOrEmpty(value) && value.Length >= 3 && value.All(char.IsLetter))
+                {
+                    teamName = value;
+                }
+
+                else 
+                { 
+                throw new ArgumentException("Назма команди повинна містити не менше 3 букв");
+                }
+            }
+            
+        }
+        
+
+        public Team(string teamName)
         {
             Members = new List<IPerson>();
+            TeamName = teamName;
+
         }
 
+        public Team()
+        {
+
+        }
         public void JoinTeam(IPerson person)
         {
             Members.Add(person);

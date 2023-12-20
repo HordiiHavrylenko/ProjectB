@@ -1,11 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ProjectB;
+using System.Numerics;
 
 class Program
 {
     static List<Team> teams = new List<Team>();
     static List<Driver> availableDrivers = new List<Driver>();
     static List<Coach> availableCoaches = new List<Coach>();
+    static List<Race> races = new List<Race>();
 
     static void Main(string[] args)
     {
@@ -46,11 +48,11 @@ class Program
                 case "6":
                     AddTeamMember();
                     break;
-                //case "7":
-                //    RemoveTeamMember();
-                //    break;
-                //case "8":
-                //    CreateRace();
+                case "7":
+                    RemoveTeamMember();
+                    break;
+                case "8":
+                    CreateRace();
                     break;
                 case "0":
                     exit = true;
@@ -63,69 +65,230 @@ class Program
         } while (!exit);
     }
 
+
+    //Створити команду
     static void CreateTeam()
     {
-        Console.WriteLine("Введіть назву команди:");
-        string teamName = Console.ReadLine();
-        Team newTeam = new Team { TeamName = teamName };
-        teams.Add(newTeam);
-        Console.WriteLine($"Команда {teamName} створена!");
+        Team team;
+
+        while (true)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Введіть назву команди:");
+            string enteredName = Console.ReadLine();
+
+            try
+            {
+                team = new Team(enteredName);
+                break;
+                
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
+        teams.Add(team);
+        Console.WriteLine($"Команда {team.TeamName} створена!");
+
     }
 
+
+    //Стоврити водія
     static void CreateDriver()
     {
-        Console.WriteLine("Введіть ім'я водія:");
-        string name = Console.ReadLine();
-        Console.WriteLine("Введіть вік водія:");
-        int age = int.Parse(Console.ReadLine());
-
-        Console.WriteLine("Виберіть марку автомобіля з наступних опцій:");
-
-        // Отримання всіх значень з enum CarBrand та їх вивід
-        foreach (CarBrand brand in Enum.GetValues(typeof(CarBrand)))
+        string enteredName;
+        string enteredAge;
+        
+        Driver driver;
+        while (true)
         {
-            Console.WriteLine($"{(int)brand}. {brand}");
+            Console.WriteLine();
+            Console.WriteLine("Введіть ім'я водія:");
+            Console.WriteLine();
+            enteredName = Console.ReadLine();
+            try
+            {
+                driver = new Driver(enteredName, 18, CarBrand.Audi, 1);
+                break;
+            }
+            catch(ArgumentException e) 
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
-        // Введення та перевірка введеного значення
-        if (Enum.TryParse(Console.ReadLine(), out CarBrand carBrand))
+        while(true)
         {
-            Console.WriteLine("Введіть ідентифікатор водія:");
-            int id = int.Parse(Console.ReadLine());
+            Console.WriteLine("Введіть вік водія:");
+            enteredAge = Console.ReadLine();
 
-            Driver newDriver = new Driver(id, name, age, carBrand);
-            availableDrivers.Add(newDriver);
-            Console.WriteLine($"Водій {name} створений!");
+            if (int.TryParse(enteredAge, out int age))
+            {
+                try
+                {
+                    driver.Age = age;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+            }
+            else
+            {
+                try
+                {
+                    throw new FormatException("Вік повинен бути числом");
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
         }
-        else
+
+        CarBrand car;
+        do
         {
-            Console.WriteLine("Невірний вибір марки автомобіля.");
+            Console.WriteLine("Оберіть марку автомобіля");
+            foreach(CarBrand carchoice in Enum.GetValues(typeof(CarBrand))) 
+            {
+                Console.WriteLine($"{(int)carchoice} - {carchoice}");
+            }
         }
+            while (!Enum.TryParse(Console.ReadLine(), out car) || !Enum.IsDefined(typeof(CarBrand), car));
+        driver.Car = car;
+
+        int id;
+        do
+        {
+            Console.WriteLine("Введіть ID водія(0-99):");
+        }
+        while (!int.TryParse(Console.ReadLine(), out id) || id < 0 || id > 99);
+
+        driver.Id = id;
+
+        availableDrivers.Add(driver);
+        Console.WriteLine($"Водій успішно створений");
     }
 
+
+
+    //Створити тренера
     static void CreateCoach()
     {
-        Console.WriteLine("Введіть ім'я тренера:");
-        string name = Console.ReadLine();
-        Console.WriteLine("Введіть вік тренера:");
-        int age = int.Parse(Console.ReadLine());
-        Console.WriteLine("Введіть зарплату тренера:");
-        int salary = int.Parse(Console.ReadLine());
+        Coach coach;
 
-        Coach newCoach = new Coach(name, age, salary);
-        availableCoaches.Add(newCoach);
-        Console.WriteLine($"Тренер {name} створений!");
+        string enteredName;
+        string enteredAge;
+        string enteredSalary;
+        while (true)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Введіть ім'я тренера");
+            Console.WriteLine();
+            enteredName = Console.ReadLine();
+
+            try
+            {
+                coach = new Coach(enteredName, 18, 1000);
+                break;
+            }
+            catch(ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+        }
+
+
+        while (true) 
+        {
+            Console.WriteLine("Введіть вік тренера:");
+            enteredAge = Console.ReadLine();
+
+            if (int.TryParse(enteredAge, out int age))
+            {
+                try
+                {
+                    coach.Age = age;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+            }
+            else
+            {
+                try
+                {
+                    throw new FormatException("Вік повинен бути числом");
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+        }
+
+        while (true)
+        {
+            Console.WriteLine("Введіть з/п тренера");
+            enteredSalary = Console.ReadLine();
+
+            if(decimal.TryParse(enteredSalary, out decimal salary))
+            {
+                try
+                {
+                    coach.Salary = salary;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+            }
+
+            else
+            {
+                try
+                {
+                    throw new FormatException("Залплатня повинна бути числом");
+                }
+                catch(FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+            
+        }
+        availableCoaches.Add(coach);
+        Console.WriteLine($"Тренер успішно створений");
     }
 
+
+    //Показати доступних водіїв
     static void DisplayAvailableDrivers()
     {
         Console.WriteLine("Список доступних водіїв:");
         foreach (var driver in availableDrivers)
         {
-            Console.WriteLine($"{driver.Name}, Age: {driver.Age}");
+            Console.WriteLine($"{driver.Name}, Age: {driver.Age}, Car:{driver.Car} Id: {driver.Id}");
         }
     }
 
+
+
+    //Показати команди
     static void DisplayTeams()
     {
         Console.WriteLine("Список команд та їх членів:");
@@ -144,6 +307,8 @@ class Program
         }
     }
 
+
+    //Додати мембера в команду
     static void AddTeamMember()
     {
         Console.WriteLine("Оберіть команду в яку хочете додати члена:");
@@ -199,5 +364,95 @@ class Program
         {
             Console.WriteLine("Невірний вибір команди.");
         }
+    }
+
+    //Видалення з команди
+    static void RemoveTeamMember()
+    {
+        Console.WriteLine("Оберіть команду, з якої хочете видалити члена:");
+
+        // Виведення існуючих команд
+        for (int i = 0; i < teams.Count; i++)
+        {
+            Console.WriteLine($"{i + 1} {teams[i].TeamName}");
+        }
+
+        // Введення та перевірка введеного значення
+        int teamChoice;
+        if (int.TryParse(Console.ReadLine(), out teamChoice) && teamChoice >= 1 && teamChoice <= teams.Count)
+        {
+            Team selectedTeam = teams[teamChoice - 1];
+
+            Console.WriteLine($"Список членів команди {selectedTeam.TeamName}:");
+
+            // Виведення членів команди
+            foreach (IPerson teamMember in selectedTeam.Members)
+            {
+                Console.WriteLine($"- {teamMember.Name}");
+            }
+
+            Console.WriteLine("Оберіть члена команди для видалення:");
+
+            // Введення та перевірка введеного значення
+            string memberName = Console.ReadLine();
+            IPerson memberToRemove = selectedTeam.Members.FirstOrDefault(member => member.Name == memberName);
+
+            if (memberToRemove != null)
+            {
+                selectedTeam.Members.Remove(memberToRemove);
+                // Додайте члена команди назад до доступних водіїв або тренерів за потреби
+                if (memberToRemove is Driver)
+                {
+                    availableDrivers.Add(memberToRemove as Driver);
+                }
+                else if (memberToRemove is Coach)
+                {
+                    availableCoaches.Add(memberToRemove as Coach);
+                }
+                Console.WriteLine($"{memberName} видалений з команди {selectedTeam.TeamName}!");
+            }
+            else
+            {
+                Console.WriteLine($"Члена команди {memberName} не знайдено серед членів команди {selectedTeam.TeamName}.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Невірний вибір команди.");
+        }
+    }
+
+    //Створення заїзду 
+    static void CreateRace()
+    {
+        Console.WriteLine("Оберіть команди для заїзду:");
+
+        // Виведення існуючих команд
+        for (int i = 0; i < teams.Count; i++)
+        {
+            Console.WriteLine($"{i + 1} {teams[i].TeamName}");
+        }
+
+        Console.Write("Виберіть першу команду (введіть номер): ");
+        int teamChoice1;
+        while (!int.TryParse(Console.ReadLine(), out teamChoice1) || teamChoice1 < 1 || teamChoice1 > teams.Count)
+        {
+            Console.WriteLine("Невірний вибір. Введіть ще раз: ");
+        }
+
+        Console.Write("Виберіть другу команду (введіть номер): ");
+        int teamChoice2;
+        while (!int.TryParse(Console.ReadLine(), out teamChoice2) || teamChoice2 < 1 || teamChoice2 > teams.Count || teamChoice2 == teamChoice1)
+        {
+            Console.WriteLine("Невірний вибір. Введіть ще раз: ");
+        }
+
+        Team selectedTeam1 = teams[teamChoice1 - 1];
+        Team selectedTeam2 = teams[teamChoice2 - 1];
+
+        Race newRace = new Race(selectedTeam1, selectedTeam2);
+        races.Add(newRace);
+
+        Console.WriteLine($"Заїзд між командами {selectedTeam1.TeamName} та {selectedTeam2.TeamName} успішно створений!");
     }
 }

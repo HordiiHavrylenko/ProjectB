@@ -11,18 +11,22 @@ namespace ProjectB
 {
     public class Driver : AbstractPerson
     {
-        private int Id { get; set; }
-        private  string driverName { get; set; }
+        private int id { get; set; }
+        private string driverName { get; set; }
         private  int driverAge { get; set; }
+
+        private CarBrand car;
 
         public override string Name
         {
             get => driverName;
             set
             {
-                if (value.Length < 2 || value.Length == 0)
-                    throw new ArgumentException("Ім'я водія повинно містити більше 3 букв та не бути пустим.");
-                driverName = value;
+                if (!string.IsNullOrEmpty(value) && value.Length >= 3 && value.All(char.IsLetter))
+                    driverName = value;
+                else
+                throw new ArgumentException("Ім'я водія повинно містити більше 3 букв та не бути пустим.");
+                
             }
         }
 
@@ -31,25 +35,53 @@ namespace ProjectB
             get => driverAge;
             set
             {
-                if(!int.TryParse(value.ToString(), out int parsedValue) || parsedValue < 18)
+                if (!int.TryParse(value.ToString(), out int parsedValue) || parsedValue < 18)
                 {
                     throw new ArgumentException("Вік водія повинен становити не менше 18 років");
                 }
 
                 driverAge = parsedValue;
-                ///TestGit
+                
             }
         }
 
 
-        public CarBrand Car { get; set; }
+        public CarBrand Car { 
+            get 
+            {
+                return car;
+            }
+            set
+            { 
+                car = value; 
+            }
+        }
 
-        public Driver(int id, string name, int age, CarBrand car) 
+        public int Id
         {
-            Id = id;
+            get { return id; }
+
+            set
+            {
+                if (value > 0 || value < 99)
+                    id = value;
+                else
+                    id = 0;
+            }
+        }
+
+        public Driver(string name, int age, CarBrand car,int id) 
+        {
+            
             Name = name;
             Age = age;
             Car = car;
+            Id = id;
+        }
+
+        public Driver()
+        {
+
         }
         public override void DisplayInfo()
         {
