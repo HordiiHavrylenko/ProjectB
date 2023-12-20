@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ProjectB;
+using ProjectB.Class;
 using System.Numerics;
+using System.Threading.Channels;
 
 class Program
 {
@@ -8,11 +10,15 @@ class Program
     static List<Driver> availableDrivers = new List<Driver>();
     static List<Coach> availableCoaches = new List<Coach>();
     static List<Race> races = new List<Race>();
-    
+    public static event EventHandler RaceCreated;
+    public static event EventHandler RaceViewed;
+
 
     static void Main(string[] args)
     {
         bool exit = false;
+        RaceCreated += (sender, e) => Console.WriteLine("Подія: Гонка успішно створена створена!");
+        RaceViewed += (sender, e) => Console.WriteLine("Подія:Заплановані гонки");
 
         do
         {
@@ -25,6 +31,7 @@ class Program
             Console.WriteLine("6. Додати члена команди");
             Console.WriteLine("7. Видалити члена команди");
             Console.WriteLine("8. Створити заїзд");
+            Console.WriteLine("9. Переглянути заїзди");
             Console.WriteLine("0. Вийти");
 
             string choice = Console.ReadLine();
@@ -54,6 +61,9 @@ class Program
                     break;
                 case "8":
                     CreateRace();
+                    break;
+                case "9":
+                    DisplayRaces();
                     break;
                 case "0":
                     exit = true;
@@ -664,6 +674,24 @@ class Program
         Race newRace = new Race(selectedTeam1, selectedTeam2);
         races.Add(newRace);
 
-        Console.WriteLine($"Заїзд між командами {selectedTeam1.TeamName} та {selectedTeam2.TeamName} успішно створений!");
+        Console.WriteLine($"Обрано команди {selectedTeam1.TeamName} та {selectedTeam2.TeamName}");
+        RaceCreated?.Invoke(null, EventArgs.Empty);
+    }
+
+    static void DisplayRaces()
+    {
+        if (races.Count == 0)
+        {
+            Console.WriteLine("Наразі немає жодних заїздів.");
+        }
+        else
+        {
+            Console.WriteLine("Список заїздів:");
+            foreach (var race in races)
+            {
+                Console.WriteLine($"Між {race.Team1.TeamName} та {race.Team2.TeamName}");
+                RaceViewed?.Invoke(null, EventArgs.Empty);
+            }
+        }
     }
 }
