@@ -8,6 +8,7 @@ class Program
     static List<Driver> availableDrivers = new List<Driver>();
     static List<Coach> availableCoaches = new List<Coach>();
     static List<Race> races = new List<Race>();
+    
 
     static void Main(string[] args)
     {
@@ -31,13 +32,13 @@ class Program
             switch (choice)
             {
                 case "1":
-                    CreateTeam();
+                    MyCreateTeamDelegate();
                     break;
                 case "2":
-                    CreateDriver();
+                    MyCreateDriverDelegate();
                     break;
                 case "3":
-                    CreateCoach();
+                    MyCreateCoachDelegate();
                     break;
                 case "4":
                     DisplayAvailableDrivers();
@@ -62,11 +63,14 @@ class Program
                     break;
             }
 
+
         } while (!exit);
     }
 
+    public delegate void CreateTeamDelegate();
+    public delegate void CreateDriverDelegate();
+    public delegate void CreateCoachDelegate();
 
-    //Створити команду
     static void CreateTeam()
     {
         Team team;
@@ -81,199 +85,229 @@ class Program
             {
                 team = new Team(enteredName);
                 break;
-                
             }
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            
         }
+
         teams.Add(team);
         Console.WriteLine($"Команда {team.TeamName} створена!");
-
     }
 
+    public static CreateTeamDelegate MyCreateTeamDelegate = CreateTeam;
 
-    //Стоврити водія
-    static void CreateDriver()
-    {
-        string enteredName;
-        string enteredAge;
-        
-        Driver driver;
-        while (true)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Введіть ім'я водія:");
-            Console.WriteLine();
-            enteredName = Console.ReadLine();
-            try
-            {
-                driver = new Driver(enteredName, 18, CarBrand.Audi, 1);
-                break;
-            }
-            catch(ArgumentException e) 
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
+    
 
-        while(true)
-        {
-            Console.WriteLine("Введіть вік водія:");
-            enteredAge = Console.ReadLine();
+    //Створити команду
+    //static void CreateTeam()
+    //{
+    //    Team team;
 
-            if (int.TryParse(enteredAge, out int age))
-            {
-                try
-                {
-                    driver.Age = age;
-                    break;
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-            }
-            else
-            {
-                try
-                {
-                    throw new FormatException("Вік повинен бути числом");
-                }
-                catch (FormatException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
+    //    while (true)
+    //    {
+    //        Console.WriteLine();
+    //        Console.WriteLine("Введіть назву команди:");
+    //        string enteredName = Console.ReadLine();
 
-        }
+    //        try
+    //        {
+    //            team = new Team(enteredName);
+    //            break;
 
-        CarBrand car;
-        do
-        {
-            Console.WriteLine("Оберіть марку автомобіля");
-            foreach(CarBrand carchoice in Enum.GetValues(typeof(CarBrand))) 
-            {
-                Console.WriteLine($"{(int)carchoice} - {carchoice}");
-            }
-        }
-            while (!Enum.TryParse(Console.ReadLine(), out car) || !Enum.IsDefined(typeof(CarBrand), car));
-        driver.Car = car;
+    //        }
+    //        catch (ArgumentException ex)
+    //        {
+    //            Console.WriteLine(ex.Message);
+    //        }
 
-        int id;
-        do
-        {
-            Console.WriteLine("Введіть ID водія(0-99):");
-        }
-        while (!int.TryParse(Console.ReadLine(), out id) || id < 0 || id > 99);
+    //    }
+    //    teams.Add(team);
+    //    Console.WriteLine($"Команда {team.TeamName} створена!");
 
-        driver.Id = id;
-
-        availableDrivers.Add(driver);
-        Console.WriteLine($"Водій успішно створений");
-    }
+    //}
 
 
+    ////Стоврити водія
+    //static void CreateDriver()
+    //{
+    //    string enteredName;
+    //    string enteredAge;
 
-    //Створити тренера
-    static void CreateCoach()
-    {
-        Coach coach;
+    //    Driver driver;
+    //    while (true)
+    //    {
+    //        Console.WriteLine();
+    //        Console.WriteLine("Введіть ім'я водія:");
+    //        Console.WriteLine();
+    //        enteredName = Console.ReadLine();
+    //        try
+    //        {
+    //            driver = new Driver(enteredName, 18, CarBrand.Audi, 1);
+    //            break;
+    //        }
+    //        catch(ArgumentException e) 
+    //        {
+    //            Console.WriteLine(e.Message);
+    //        }
+    //    }
 
-        string enteredName;
-        string enteredAge;
-        string enteredSalary;
-        while (true)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Введіть ім'я тренера");
-            Console.WriteLine();
-            enteredName = Console.ReadLine();
+    //    while(true)
+    //    {
+    //        Console.WriteLine("Введіть вік водія:");
+    //        enteredAge = Console.ReadLine();
 
-            try
-            {
-                coach = new Coach(enteredName, 18, 1000);
-                break;
-            }
-            catch(ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+    //        if (int.TryParse(enteredAge, out int age))
+    //        {
+    //            try
+    //            {
+    //                driver.Age = age;
+    //                break;
+    //            }
+    //            catch (ArgumentException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //                continue;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            try
+    //            {
+    //                throw new FormatException("Вік повинен бути числом");
+    //            }
+    //            catch (FormatException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //            }
+    //        }
 
-        }
+    //    }
+
+    //    CarBrand car;
+    //    do
+    //    {
+    //        Console.WriteLine("Оберіть марку автомобіля");
+    //        foreach(CarBrand carchoice in Enum.GetValues(typeof(CarBrand))) 
+    //        {
+    //            Console.WriteLine($"{(int)carchoice} - {carchoice}");
+    //        }
+    //    }
+    //        while (!Enum.TryParse(Console.ReadLine(), out car) || !Enum.IsDefined(typeof(CarBrand), car));
+    //    driver.Car = car;
+
+    //    int id;
+    //    do
+    //    {
+    //        Console.WriteLine("Введіть ID водія(0-99):");
+    //    }
+    //    while (!int.TryParse(Console.ReadLine(), out id) || id < 0 || id > 99);
+
+    //    driver.Id = id;
+
+    //    availableDrivers.Add(driver);
+    //    Console.WriteLine($"Водій успішно створений");
+    //}
 
 
-        while (true) 
-        {
-            Console.WriteLine("Введіть вік тренера:");
-            enteredAge = Console.ReadLine();
 
-            if (int.TryParse(enteredAge, out int age))
-            {
-                try
-                {
-                    coach.Age = age;
-                    break;
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-            }
-            else
-            {
-                try
-                {
-                    throw new FormatException("Вік повинен бути числом");
-                }
-                catch (FormatException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
+    ////Створити тренера
+    //static void CreateCoach()
+    //{
+    //    Coach coach;
 
-        }
+    //    string enteredName;
+    //    string enteredAge;
+    //    string enteredSalary;
+    //    while (true)
+    //    {
+    //        Console.WriteLine();
+    //        Console.WriteLine("Введіть ім'я тренера");
+    //        Console.WriteLine();
+    //        enteredName = Console.ReadLine();
 
-        while (true)
-        {
-            Console.WriteLine("Введіть з/п тренера");
-            enteredSalary = Console.ReadLine();
+    //        try
+    //        {
+    //            coach = new Coach(enteredName, 18, 1000);
+    //            break;
+    //        }
+    //        catch(ArgumentException e)
+    //        {
+    //            Console.WriteLine(e.Message);
+    //        }
 
-            if(decimal.TryParse(enteredSalary, out decimal salary))
-            {
-                try
-                {
-                    coach.Salary = salary;
-                    break;
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+    //    }
 
-            }
 
-            else
-            {
-                try
-                {
-                    throw new FormatException("Залплатня повинна бути числом");
-                }
-                catch(FormatException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
+    //    while (true) 
+    //    {
+    //        Console.WriteLine("Введіть вік тренера:");
+    //        enteredAge = Console.ReadLine();
 
-            
-        }
-        availableCoaches.Add(coach);
-        Console.WriteLine($"Тренер успішно створений");
-    }
+    //        if (int.TryParse(enteredAge, out int age))
+    //        {
+    //            try
+    //            {
+    //                coach.Age = age;
+    //                break;
+    //            }
+    //            catch (ArgumentException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //                continue;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            try
+    //            {
+    //                throw new FormatException("Вік повинен бути числом");
+    //            }
+    //            catch (FormatException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //            }
+    //        }
+
+    //    }
+
+    //    while (true)
+    //    {
+    //        Console.WriteLine("Введіть з/п тренера");
+    //        enteredSalary = Console.ReadLine();
+
+    //        if(decimal.TryParse(enteredSalary, out decimal salary))
+    //        {
+    //            try
+    //            {
+    //                coach.Salary = salary;
+    //                break;
+    //            }
+    //            catch (ArgumentException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //            }
+
+    //        }
+
+    //        else
+    //        {
+    //            try
+    //            {
+    //                throw new FormatException("Залплатня повинна бути числом");
+    //            }
+    //            catch(FormatException e)
+    //            {
+    //                Console.WriteLine(e.Message);
+    //            }
+    //        }
+
+
+    //    }
+    //    availableCoaches.Add(coach);
+    //    Console.WriteLine($"Тренер успішно створений");
+    //}
 
 
     //Показати доступних водіїв
