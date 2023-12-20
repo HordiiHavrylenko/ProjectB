@@ -98,7 +98,184 @@ class Program
 
     public static CreateTeamDelegate MyCreateTeamDelegate = CreateTeam;
 
-    
+    static void CreateDriver()
+    {
+        string enteredName;
+        string enteredAge;
+
+        Driver driver;
+        while (true)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Введіть ім'я водія:");
+            Console.WriteLine();
+            enteredName = Console.ReadLine();
+            try
+            {
+                driver = new Driver(enteredName, 18, CarBrand.Audi, 1);
+                break;
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        while (true)
+        {
+            Console.WriteLine("Введіть вік водія:");
+            enteredAge = Console.ReadLine();
+
+            if (int.TryParse(enteredAge, out int age))
+            {
+                try
+                {
+                    driver.Age = age;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+            }
+            else
+            {
+                try
+                {
+                    throw new FormatException("Вік повинен бути числом");
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+        }
+
+        CarBrand car;
+        do
+        {
+            Console.WriteLine("Оберіть марку автомобіля");
+            foreach (CarBrand carchoice in Enum.GetValues(typeof(CarBrand)))
+            {
+                Console.WriteLine($"{(int)carchoice} - {carchoice}");
+            }
+        }
+        while (!Enum.TryParse(Console.ReadLine(), out car) || !Enum.IsDefined(typeof(CarBrand), car));
+        driver.Car = car;
+
+        int id;
+        do
+        {
+            Console.WriteLine("Введіть ID водія(0-99):");
+        }
+        while (!int.TryParse(Console.ReadLine(), out id) || id < 0 || id > 99);
+
+        driver.Id = id;
+
+        availableDrivers.Add(driver);
+        Console.WriteLine($"Водій успішно створений");
+
+
+    }
+    public static CreateDriverDelegate MyCreateDriverDelegate = CreateDriver;
+
+    static void CreateCoach()
+    {
+        Coach coach;
+
+        string enteredName;
+        string enteredAge;
+        string enteredSalary;
+        while (true)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Введіть ім'я тренера");
+            Console.WriteLine();
+            enteredName = Console.ReadLine();
+
+            try
+            {
+                coach = new Coach(enteredName, 18, 1000);
+                break;
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        while (true)
+        {
+            Console.WriteLine("Введіть вік тренера:");
+            enteredAge = Console.ReadLine();
+
+            if (int.TryParse(enteredAge, out int age))
+            {
+                try
+                {
+                    coach.Age = age;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+            }
+            else
+            {
+                try
+                {
+                    throw new FormatException("Вік повинен бути числом");
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+        }
+
+        while (true)
+        {
+            Console.WriteLine("Введіть з/п тренера");
+            enteredSalary = Console.ReadLine();
+
+            if (decimal.TryParse(enteredSalary, out decimal salary))
+            {
+                try
+                {
+                    coach.Salary = salary;
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+            }
+
+            else
+            {
+                try
+                {
+                    throw new FormatException("Залплатня повинна бути числом");
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+
+        }
+        availableCoaches.Add(coach);
+        Console.WriteLine($"Тренер успішно створений");
+
+    }
+    public static CreateCoachDelegate MyCreateCoachDelegate = CreateCoach;
 
     //Створити команду
     //static void CreateTeam()
